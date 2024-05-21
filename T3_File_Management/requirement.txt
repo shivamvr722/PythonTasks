@@ -1,0 +1,25 @@
+Task 1: File Filtering in Python
+Overview:
+- The File Filtering in Python task involves developing a Python script for filtering files in a specified directory based on user-defined criteria. The script provides functionality to , and allows users to perform actions such as deletion, moving, or copying on the filtered files.
+
+Requirements:
+Input Handling:
+Accept input for the directory path where the files are located.
+Prompt the user for filtering criteria, such as file extension, file size, or keywords in the file name.
+File Filtering:
+Filter the files in the specified directory based on the user-defined criteria.
+Display the filtered list of files to the user.
+User Actions:
+Allow the user to choose an action to perform on the filtered files, such as deletion, moving, or copying.
+Error Handling:
+Implement error handling for invalid input and file operations, providing informative messages to the user.
+
+
+
+
+Accept input for the directory path where the files are located.
+
+filter files by file extension, file size, or keywords in the file name
+actions such as deletion, moving, or copying
+
+Display the filtered list of files to the user.
