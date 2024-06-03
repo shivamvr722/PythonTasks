@@ -1,9 +1,11 @@
+import random 
+
 ludo_cordinated = []
 for i in range(15):
     for j in range(15):
         ludo_cordinated.append({(j, i) : ""})
 
-players_position = {"red":{"R1": 6, "R2": 3, "R3": 7, "R4": 10}, "blue":{"B1": 0, "B2": 7, "B3": 9, "B4": 7}, "green":{"G1": 0, "G2": 0, "G3": 0, "G4": 0}, "yellow":{"Y1": 0, "Y2": 0, "Y3": 0, "Y4": 0}}
+players_position = {"red":{"R1": 6, "R2": 56, "R3": 56, "R4": 10}, "blue":{"B1": -1, "B2": -1, "B3": -1, "B4": -1}, "green":{"G1": -1, "G2": -1, "G3": -1, "G4": -1}, "yellow":{"Y1": -1, "Y2": -1, "Y3": -1, "Y4": -1}}
 
 home_coordinated = {"red":{"R1":(2, 2), "R2":(2, 3), "R3":(3, 2), "R4":(3, 3)}, "blue":{"B1":(2, 11), "B2":(2, 12), "B3":(3, 11), "B4":(3, 12)},"green": {"G1":(11, 2), "G2":(11, 3), "G3":(12, 2), "G4":(12, 3)}, "yellow":{"Y1":(11, 11), "Y2":(11, 12), "Y3":(12, 11), "Y4":(12, 12)}}
 
@@ -56,7 +58,7 @@ def set_home(ludo, player_color, home_cordinates):
     for player, coins in players_position.items():
         if player == player_color:
             for cordinate, color in zip(coins.items(), home_cordinates):
-                if color == ludo and not cordinate[1]:
+                if color == ludo and cordinate[1] == -1:
                     index = ludo_cordinated.index({ludo: ""})
                     ludo_cordinated[index][ludo] = "{:>7}".format(cordinate[0])
                     # ludo_cordinated[index][ludo] = cordinate[0]
@@ -72,7 +74,6 @@ def set_path_ways(ludo, cordinates, dictionary, set_with):
                 ludo_cordinated[index][ludo] = f"   {set_with}   "
             else:
                 ludo_cordinated[index][ludo] = " {:>5} ".format(set_with)
-            # ludo_cordinated[index][ludo] = " # "
 
 
 def is_home(ludo):
@@ -99,7 +100,7 @@ def set_coin_operation(ludo, dictionary, coin_dict, cordinates):
                 ludo_cordinated[index][ludo] = " {:>5} ".format(f"| {coin} |")
 
 # main control
-def start_boarding(dice, c_coin, c_player):
+def start_boarding(dice, c_player, c_coin):
     players_position[c_player][c_coin] = players_position[c_player][c_coin] + dice
     
     for ludo_dict in ludo_cordinated:
@@ -109,6 +110,7 @@ def start_boarding(dice, c_coin, c_player):
         # for setting up the path, safe zones and destination
         pathways(ludo, ludo_dict)
         
+        # for setting up the player 
         for player, coin_dict in players_position.items():
             if player == "blue":
                 set_coin_operation(ludo, ludo_dict, coin_dict, blue_path_cordiantes)
@@ -119,12 +121,30 @@ def start_boarding(dice, c_coin, c_player):
             if player == "green":
                 set_coin_operation(ludo, ludo_dict, coin_dict, green_path_cordinates)
 
-            # else:
-            #     set_coin_operation(ludo, ludo_dict, coin_dict, blue_path_cordiantes)
-        
 
 
-start_boarding(55, "B1", "blue")
+def start(n, c_player, c_coin):
+    for player, coin_dict in players_position.items():
+        if c_player == player:
+            for coin in coin_dict:
+                if coin == c_coin:
+                    if players_position[c_player][coin] == -1 and n == 6:
+                        players_position[c_player][c_coin] = 0
+                        return True
+                    else: 
+                        return False
+
+
+
+def game_menu():
+    # n = random.randint(1,6)
+    n = int(input("enter the no: "))
+    if not start(n, "blue", "B1"):
+        start_boarding(0, "blue", "B1") 
+    else:
+        start_boarding(n, "blue", "B1")
+
+game_menu()
 
 
 i = 0
@@ -136,3 +156,7 @@ for positions in ludo_cordinated:
     if i == 15:
         print("\n\n")
         i = 0
+
+# glpat-JQzV4f_2HhJHxsS5Lx3k
+
+print(players_position)
