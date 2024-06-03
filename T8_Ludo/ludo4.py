@@ -157,6 +157,5 @@ for positions in ludo_cordinated:
         print("\n\n")
         i = 0
 
-# glpat-4ACWnyWexzYaPWQ16r9z
 
 print(players_position)
