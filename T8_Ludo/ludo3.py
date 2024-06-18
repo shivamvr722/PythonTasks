@@ -1,3 +1,5 @@
+import random
+
 ludo_cordinated = []
 
 for i in range(15):

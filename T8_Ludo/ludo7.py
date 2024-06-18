@@ -5,8 +5,8 @@ for i in range(15):
     for j in range(15):
         ludo_cordinated.append({(j, i): ""})
 
-players_position = { "blue": {"B1": -1, "B2": -1, "B3": -1, "B4": -1}, "red": {"R1": -1, "R2": -1, "R3": -1, "R4": -1},
-                    "green": {"G1": -1, "G2": -1, "G3": -1, "G4": -1}, "yellow": {"Y1": -1, "Y2": -1, "Y3": -1, "Y4": -1}}
+# players_position = {"blue": {"B1": -1, "B2": -1, "B3": -1, "B4": -1}, "red": {"R1": -1, "R2": -1, "R3": -1, "R4": -1}, "green": {"G1": -1, "G2": -1, "G3": -1, "G4": -1}, "yellow": {"Y1": -1, "Y2": -1, "Y3": -1, "Y4": -1}}
+players_position = {}
 
 home_coordinated = {"red": {"R1": (2, 2), "R2": (2, 3), "R3": (3, 2), "R4": (3, 3)}, "blue": {"B1": (2, 11), "B2": (2, 12), "B3": (3, 11), "B4": (
     3, 12)}, "green": {"G1": (11, 2), "G2": (11, 3), "G3": (12, 2), "G4": (12, 3)}, "yellow": {"Y1": (11, 11), "Y2": (11, 12), "Y3": (12, 11), "Y4": (12, 12)}}
@@ -15,6 +15,10 @@ destination_cordinates = ((7, 6), (6, 7), (8, 7), (7, 8))
 
 # for home side borders
 home_side_borders = ((6, 6), (8, 6), (7, 7), (6, 8), (8, 8),)
+
+# safe cordinates
+safe_cordinates = ((7, 6), (6, 7), (8, 7), (7, 8), (8, 12), (6, 2), (12, 6), (2, 8), (1, 6), (6, 13), (8, 1), (13, 8))
+
 
 # for borders
 border_cordinates = ((0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (9, 0), (10, 0), (11, 0), (12, 0), (13, 0), (14, 0), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (9, 1), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1), (0, 2), (1, 2), (4, 2), (5, 2), (9, 2), (10, 2), (13, 2), (14, 2), (0, 3), (1, 3), (4, 3), (5, 3), (9, 3), (10, 3), (13, 3), (14, 3), (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), (5, 4), (9, 4), (10, 4), (11, 4), (12, 4), (13, 4), (14, 4), (0, 5), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (9, 5), (10, 5), (11, 5), (12, 5), (13, 5), (14, 5), (0, 9), (1, 9),
@@ -51,6 +55,10 @@ redhome = ((2, 2), (3, 2), (2, 3), (3, 3))
 bluehome = ((2, 11), (3, 11), (2, 12), (3, 12))
 greenhome = ((11, 2), (12, 2), (11, 3), (12, 3))
 yellowhome = ((11, 11), (12, 11), (11, 12), (12, 12))
+
+
+# winner list 
+winners = []
 
 
 # home position
@@ -93,47 +101,18 @@ def pathways(ludo, dictionary):
     set_path_ways(ludo, start_cordinates, dictionary, "| S |")
 
 
-# def set_coin_operation(ludo, dictionary, coin_dict, cordinates):
-#     for coin, value in coin_dict.items():
-#         if value:
-#             cordinate = cordinates[value]
-#             if cordinate == ludo:
-#                 index = ludo_cordinated.index(dictionary)
-#                 ludo_cordinated[index][ludo] = " {:>5} ".format(f"| {coin} |")
-
-
-def set_coin_operation(ludo, dictionary, coin_dict, cordinates, player):
-    player_coins = ["R1", "R2", "R3", "R4", "B1", "B2", "B3", "B4","G1", "G2", "G3", "G4","Y1", "Y2", "Y3", "Y4"]
+def set_coin_operation(ludo, dictionary, coin_dict, cordinates):
     for coin, value in coin_dict.items():
-        if value:
+        if value != -1 and value <= 56:
             cordinate = cordinates[value]
             if cordinate == ludo:
                 index = ludo_cordinated.index(dictionary)
-                # print(len(ludo_cordinated[index][ludo].strip(" | ")), ludo_cordinated[index][ludo].strip(" | "),  "pppppppp")
-                # print(ludo_cordinated[index][ludo].strip(" | ") in player_coins)  
-                killable = ludo_cordinated[index][ludo].strip(" | ")
-                if killable in player_coins:
-                    killsplr = None
-                    print("xxxxxxx", players_position[player],  "xxxxxxx")
-                    if killable[0] == "R":
-                        killsplr = "red"
-                    if killable[0] == "Y":
-                        killsplr = "yellow"
-                    if killable[0] == "B":
-                        killsplr = "blue"
-                    elif killable[0] == "G":
-                        killsplr = "green"
-
-                    players_position[killsplr][killable] = -1
-                    print("yyyyyyy", players_position[player], "yyyyyyy")
-                
-            # elif players_position[player][ludo] != 56:
                 ludo_cordinated[index][ludo] = " {:>5} ".format(f"| {coin} |")
-                print(ludo_cordinated[index][ludo])
 
 
 # main control
 def display():
+    print(players_position)
     i = 0
     for positions in ludo_cordinated:
         for key, position in positions.items():
@@ -144,9 +123,10 @@ def display():
             print("\n\n")
             i = 0
 
-def start_boarding(c_player, dice):
+def start_boarding(c_player, dice, player_upcoming):
     print(players_position[c_player])
     print(f"Dice: {dice}")
+  
     for ludo_dict in ludo_cordinated:
         for ludo in ludo_dict:
             # setting coins on home index
@@ -157,74 +137,200 @@ def start_boarding(c_player, dice):
         # for setting up the player
         for player, coin_dict in players_position.items():
             if player == "blue":
-                set_coin_operation(ludo, ludo_dict, coin_dict, blue_path_cordiantes, player)
-            if player == "red":
-                set_coin_operation(ludo, ludo_dict, coin_dict, red_path_cordinates, player)
-            if player == "yellow":
-                set_coin_operation(ludo, ludo_dict, coin_dict, yellow_path_cordinates, player)
-            if player == "green":
-                set_coin_operation(ludo, ludo_dict, coin_dict, green_path_cordinates, player)
+                set_coin_operation(ludo, ludo_dict, coin_dict, blue_path_cordiantes)
+            elif player == "red":
+                set_coin_operation(ludo, ludo_dict, coin_dict, red_path_cordinates)
+            elif player == "yellow":
+                set_coin_operation(ludo, ludo_dict, coin_dict, yellow_path_cordinates)
+            elif player == "green":
+                set_coin_operation(ludo, ludo_dict, coin_dict, green_path_cordinates)
     display()
     # print(ludo_cordinated)
 
 
 def game_play(player, coin, dice):
-    players_position[player][coin] = players_position[player][coin] + dice
-    start_boarding(player, dice)
-    # n = random.randint(1,6)
+    cord = None
+    flag = False
 
-
-
-# def kill_and_safe():
-#     for ludo_dict in ludo_cordinated:
-#         for path in path_cordinates:
-#             for ludo in ludo_dict:
-#                 if ludo == path:
-#                     if ludo_cordinated[ludo] == 
-                    
-
-
-def on_the_way(player):    
-    print(f"Turn: {player.capitalize()}")
-    flag = True
-
-    allowed = ['R', 'B', 'G', 'Y', '1', '2', '3', '4']
-    while flag:
-        coin = input("enter coin to move: ").strip("").capitalize()
-        if coin in allowed:
-            flag = False
-        
-    n = int(input("enter the no: "))
-
-    if coin.isdigit():
-        prefix = player[0].capitalize()
-        coin = prefix + str(coin)
-
-    cvalue = players_position[player][coin]
-    
-    if cvalue == -1 and n == 6:
-        players_position[player][coin] = 0
-        game_play(player, coin, 0)
-        return True
-    elif cvalue == -1 and n != 6:
-        return False
-
-    print(player, cvalue)
-    if cvalue < 55:
-        game_play(player, coin,  n)
-        return True
+    if (players_position[player][coin] + dice) < 56:
+        if player == "blue":
+            cord = blue_path_cordiantes[players_position[player][coin] + dice]
+        elif player == "red":
+            cord = red_path_cordinates[players_position[player][coin] + dice]
+        elif player == "green":
+            cord = green_path_cordinates[players_position[player][coin] + dice]
+        elif player == "yellow":
+            cord = yellow_path_cordinates[players_position[player][coin] + dice]
+   
+    print("cord...", cord)
+    for dics in ludo_cordinated:
+        for dt in dics:
+            if dt == cord:
+                killable = dics[cord]
+                print(killable, "thi killabel might be")
+                nkills = killable.strip(" | ")
+               
+                if len(nkills) == 2 and cord not in safe_cordinates:
+                    if nkills[0] == "R" and coin[0] != "R":
+                        players_position["red"][nkills] = -1
+                        print("Red executed", players_position["red"][nkills])
+                        flag = True
+                        break
+                    elif nkills[0] == "B" and coin[0] != "B":
+                        players_position["blue"][nkills] = -1
+                        print("blue executed", players_position["blue"][nkills])
+                        flag = True
+                        break
+                    elif nkills[0] == "G" and coin[0] != "G":
+                        players_position["green"][nkills] = -1
+                        print("green executed", players_position["green"][nkills])
+                        flag = True
+                        break
+                    elif nkills[0] == "Y" and coin[0] != "Y":
+                        players_position["yellow"][nkills] = -1
+                        print("yellow executed", players_position["yellow"][nkills])
+                        flag = True
+                        break
+                break
+            
+    if players_position[player][coin] + dice <= 56:
+        players_position[player][coin] = players_position[player][coin] + dice
+        player_upcoming = players_position[player][coin]
+        start_boarding(player, dice, player_upcoming)
+        if flag == True:
+            return "killed"
+        else:
+            return False
     else:
         return True
+    # n = random.randint(1,6)
+    
+
+                   
+def ask_roll_dice():
+    n = input("Roll The Dice or For Exit N: ").strip(" ").capitalize()
+    if n == "N":
+        return "N"
+    else:
+        # n = random.randint(1, 6)
+        print("Dice: ", n)
+        return int(n)
+    
+def ask_coin_to_move(player, coins, n):
+    players_coins_on_path = [player[0].capitalize()]
+    all_at_home = all(value == -1 for value in coins.values())
+    
+    for rcoin, value in coins.items():
+        if (value != -1 and value != 56 and (value + n) <= 56) or (value == -1 and n == 6):
+            players_coins_on_path.append(rcoin[1])
+
+    print("Movable Coins: ", players_coins_on_path)
+    if len(players_coins_on_path) == 1:
+        return False
+    while True:
+        coin = input("\nEnter coin to move: ").strip(" ").capitalize()
+        if coin in players_coins_on_path:
+            if coin.isdigit():
+                prefix = player[0].capitalize()
+                coin = prefix + str(coin)
+                return coin
+            else:
+                print("Invalid Choice. Try Again!") 
+
+def move_piece(player, coin, steps):
+    current_position = players_position[player][coin]
+    
+    if current_position == -1:
+        if steps == 6:
+            players_position[player][coin] = 0
+            game_play(player, coin, 0)
+            return True
+        else:
+            return False
+    else:
+        if current_position + steps <= 56:
+            new_position = current_position + steps
+        else:
+            overshoot = current_position + steps - 56
+            new_position = 56 - overshoot
+
+        iskill = game_play(player, coin, steps)
+        if iskill =="killed":
+            return "killed"
+        
+        if new_position == 56:
+            print(f"{coin} has reached the finish!")
+            return "reached"
+        return True
+
+def check_win(player):
+    iswin = all(position == 56 for position in players_position[player].values())
+    if iswin:
+        winners.append(player)
+    return iswin
+
+
+def on_the_way(player, coins):   
+    print(f"Turn: {player.capitalize()}")
+    while True:
+        n = ask_roll_dice()
+
+        if n == "N":
+            return "N"
+        
+        if all(value == -1 for value in coins.values()) and n != 6:
+            print("Didn't get 6...! Try Again in Next Turn\n")
+            return False
+        
+        coin = ask_coin_to_move(player, coins, n)
+        if not coin:
+            return False
+        
+        ans = move_piece(player, coin, n)
+        if ans == "killed" or ans == "reached":
+            continue
+        if ans:
+            print(f"Moved {coin} for {player}. New Position: {players_position[player][coin]}")
+            if check_win(player):
+                print(f"{player.capitalize()} wins the game!")
+            if n != 6:
+                return True
+        else:
+            print("Couldn't move the selected piece. Try again")
+            if n == 6:
+                continue
+        
+
 
 def start_game():
-    start_boarding("red", "0")
-    while True:
-        flag = True
+    flag = True
+    while flag:
+        try:
+            nply = int(input("Enter number of players: ").strip(" "))
+            flag = False
+        except:
+            continue    
+    
+    plyer_color = ["blue", "red", "green", "yellow"]
+    for n in range(nply):
+        plr = plyer_color[n][0].capitalize()
+        players_position[plyer_color[n]] = {f"{plr}1": -1, f"{plr}2": -1, f"{plr}3": -1, f"{plr}4": -1}
+    print(players_position, "run time list")
+    
+    
+    start_boarding("blue", "0", "0")
+    flag = True
+    while flag:
         for player, coins in players_position.items():
-            on_the_way(player)
-
+            ans = on_the_way(player, coins)
+            if ans == "N":
+                flag = False
+                break
+            
 print(players_position)
-# kill_and_safe()
 
-start_game()
+if __name__ == "__main__":
+    start_game()
+
+
 # glpat-4ACWnyWexzYaPWQ16r9z
