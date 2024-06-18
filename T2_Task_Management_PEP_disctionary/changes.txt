@@ -1,0 +1,14 @@
+indentation 4 
+top-level function and class definitions with two blank lines.
+Method definitions inside a class are surrounded by a single blank line
+Use blank lines in functions, sparingly, to indicate logical sections
+
+removing trailing white spaces 
+surrounding require operators with space on either side ==, <, >, !=, <>, <=, >=, in, not in, is, is not, (+=, -= etc.),(and, or, not)
+using the only doble qoute 
+Avoid extraneous whitespace # Correct: spam(ham[1], {eggs: 2})
+
+Don’t use spaces around the = sign when used to indicate a keyword argument, or when used to indicate a default value for an unannotated function parameter:
+
+Names that are visible to the user as public parts of the API should follow conventions that reflect usage rather than implementation.
+Comparisons to singletons like None should always be done with is or is not, never the equality operators.
