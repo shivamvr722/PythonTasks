@@ -240,10 +240,11 @@ def ask_roll_dice():
     try:
         ## manual mode
         # n = input("Roll The Dice or For Exit N: ").strip(" ").capitalize()
-
+        x = n
         ## automatic mode
         x = input("\nRoll The Dice or For Exit N: ").strip(" ").capitalize()
         n = random.randint(1, 6)
+        
         if x == "N":
             return "N"
         else:
@@ -294,10 +295,8 @@ def move_piece(player, coin, steps):
                 return False
         else:
             if current_position + steps <= 56:
-                print(steps, " step1")
                 new_position = current_position + steps
             else:
-                print(steps, " step2")
                 overshoot = current_position + steps - 56
                 new_position = 56 - overshoot
 
@@ -315,15 +314,27 @@ def move_piece(player, coin, steps):
         return False
 
 
+def game_over():
+    for player in players_position:
+        iswin = all(position == 56 for position in players_position[player].values())
+        if not iswin:
+            return False
+    return True
+
+
 def check_win(player):
     try:
         iswin = all(position == 56 for position in players_position[player].values())
         if iswin:
             winners.append(player)
+            if game_over():
+                print("over1")
+                return "over"
+            
         return iswin
     
     except Exception as e:
-        print("something went wrong!")
+        print("something went wrong! Check win")
         return False
 
 
@@ -349,7 +360,12 @@ def on_the_way(player, coins):
             
             ans = move_piece(player, coin, n)
             if ans == "killed" or ans == "reached":
-                if check_win(player):
+                winover = check_win(player)
+                if winover == "over":
+                    print("\n!! Game Over !!\n")
+                    return "N"
+                
+                if winover:
                     print(f"\n\n**|** {player.capitalize()} wins the game! **|**\n\n")
                 continue
                 
@@ -363,7 +379,7 @@ def on_the_way(player, coins):
                     continue
 
     except Exception as e:
-        print("something went wrong!")
+        print("something went wrong!", e)
         return False
 
 
