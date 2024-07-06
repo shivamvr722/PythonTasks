@@ -239,12 +239,12 @@ def game_play(player, coin, dice):
 def ask_roll_dice():
     try:
         ## manual mode
-        # n = input("Roll The Dice or For Exit N: ").strip(" ").capitalize()
+        n = input("Roll The Dice or For Exit N: ").strip(" ").capitalize()
         x = n
         ## automatic mode
-        x = input("\nRoll The Dice or For Exit N: ").strip(" ").capitalize()
-        n = random.randint(1, 6)
-        
+        # x = input("\nRoll The Dice or For Exit N: ").strip(" ").capitalize()
+        # n = random.randint(1, 6)
+
         if x == "N":
             return "N"
         else:
