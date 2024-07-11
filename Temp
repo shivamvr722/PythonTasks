@@ -1,0 +1,131 @@
+#models
+from django.db import models
+
+class Education(models.Model):
+    course_name = models.CharField(max_length=255)
+    percentage = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    year = models.IntegerField()
+
+
+# forms
+from django import forms
+from .models import Education
+
+class EducationForm(forms.ModelForm):
+    class Meta:
+        model = Education
+        fields = ['course_name', 'percentage', 'year']
+
+EducationFormSet = formset_factory(EducationForm, extra=1, can_delete=True)
+
+
+
+# views 
+def education_view(request):
+    if request.method == 'POST':
+        formset = EducationFormSet(request.POST)
+        if formset.is_valid():
+            # Save the formset data here (explained later)
+            return redirect('success_url')  # Replace with your success URL
+    else:
+        formset = EducationFormSet()
+
+    context = {'formset': formset}
+    return render(request, 'education_form.html', context)
+
+# template
+<form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}  # Required hidden field for formset management
+
+    {% for form in formset %}
+        <div>
+            {{ form.as_p }}
+
+            {% if form.can_delete %}
+                <button type="button" onclick="removeForm({{ form.management_form.id }})">Remove</button>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <button type="button" onclick="addForm()">Add New</button>
+    <button type="submit">Submit Education Details</button>
+</form>
+
+<script>
+function addForm() {
+    let formCount = document.querySelectorAll('.form-container').length;
+    let newFormIndex = formCount + 1;
+    let newFormHtml = `
+        <div class="form-container">
+            {{ formset.empty_form.as_p }}
+            <button type="button" onclick="removeForm(this)">Remove</button>
+        </div>`;
+
+    // Modify your template to inject the new form HTML (use JavaScript libraries like jQuery for better handling)
+    document.getElementById('formset-container').innerHTML += newFormHtml;
+}
+
+function removeForm(form) {
+    // Modify your template to remove the form container (use JavaScript libraries for better handling)
+    form.parentElement.remove();
+}
+</script>
+
+#In your view's POST method, after checking formset.is_valid(), iterate through the cleaned_data of the formset and save each education entry to the database:
+if formset.is_valid():
+    for form in formset:
+        education = form.save(commit=False)  # Don't commit yet
+        # Access form data (course_name, percentage, year)
+        education.save()
+
+
+#for populating data
+def education_view(request):
+    if request.method == 'POST':
+        formset = EducationFormSet(request.POST)
+        if formset.is_valid():
+            # ... (save formset data)
+    else:
+        educations = Education.objects.filter(user=request.user)  # Assuming a user relationship
+        formset = EducationFormSet(queryset=educations)  # Pre-populate with existing data
+
+    context = {'formset': formset}
+    return render(request, 'education_form.html', context)
+
+# in html
+
+<form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    {% for form in formset %}
+        <div>
+            {{ form.as_p }}
+            {% if form.can_delete %}
+                <button type="button" onclick="removeForm({{ form.management_form.id }})">Remove</button>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <button type="button" onclick="addForm()">Add New</button>
+    <button type="submit">Submit Education Details</button>
+</form>
+
+<script>
+// Modify the logic to inject initial form data based on your existing education data
+function addForm() {
+    // ... (existing code)
+
+    let initialFormHtml = `
+        <div class="form-container">
+            {{ formset.empty_form.as_p initial=[{'course_name': 'Course 1', 'percentage': 85, 'year': 2022}] }}  # Example initial data
+            <button type="button" onclick="removeForm(this)">Remove</button>
+        </div>`;
+
+    document.getElementById('formset-container').innerHTML += initialFormHtml;
+}
+</script>
+
+
+#
